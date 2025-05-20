@@ -25,9 +25,6 @@ Signal addition is used for signal mixing, such as combining multiple channels, 
 - Background suppression
 - Differential signal processing
 
-<!-- Insert Figure 1: Basic signals and addition/subtraction demonstration -->
-<!-- Corresponds to the first figure (original signals display) and second figure (addition and subtraction) in the code -->
-
 
 ![Figure 1 - Original Signals](Github_fig/Figure_1.png)
 *Figure 1: Basic Signal Demonstration - Shows the fundamental sine waves and noise used for subsequent processing*
@@ -45,13 +42,11 @@ Signal multiplication enables modulation, gating, and windowing operations, with
 - Time-domain windowing (reducing spectral leakage)
 - Signal gating (controlling signal timing)
 
-<!-- Insert Figure 3: Multiplication operations demonstration -->
-<!-- Corresponds to the third figure (multiplication operations) in the code -->
 
-```markdown
-![Figure 3 - Signal Multiplication](fig3_multiplication.png)
+
+![Figure 3 - Signal Multiplication](Github_fig/Figure_3.png)
 *Figure 3: Signal Multiplication Operations - Top: AM modulation; Middle: Window function application; Bottom: Signal gating*
-```
+
 
 #### 1.3 Time Shift and Scaling
 
@@ -63,13 +58,11 @@ Time shift operations change the position of signals along the time axis, while 
 - Speech rate conversion (speed-up or slow-down)
 - Doppler effect correction
 
-<!-- Insert Figure 4: Time shift and scaling demonstration -->
-<!-- Corresponds to the fourth figure (time shift and scaling) in the code -->
 
-```markdown
-![Figure 4 - Time Shift and Scaling](fig4_time_shift_scaling.png)
+
+![Figure 4 - Time Shift and Scaling](Github_fig/Figure_4.png)
 *Figure 4: Time Shift and Scaling - Top: Time shift operation; Middle: Time compression (speed-up); Bottom: Time expansion (slow-down)*
-```
+
 
 #### 1.4 Differentiation and Integration
 
@@ -85,13 +78,11 @@ Differentiation extracts the rate of change in signals, helping to detect edges 
 - Signal smoothing
 - Trend analysis
 
-<!-- Insert Figure 5: Differentiation and integration demonstration -->
-<!-- Corresponds to the fifth figure (differentiation and integration) in the code -->
 
-```markdown
-![Figure 5 - Differentiation and Integration](fig5_differentiation_integration.png)
+
+![Figure 5 - Differentiation and Integration](Github_fig/Figure_5.png)
 *Figure 5: Differentiation and Integration - Top: Edge detection (differentiation); Bottom: Signal integration (cumulative properties)*
-```
+
 
 ### 2. Point-by-Point Non-Linear Transformations
 
@@ -104,16 +95,14 @@ Quantization converts continuous-amplitude signals into discrete levels, a key s
 - Digital audio and image processing
 - Data compression
 
-<!-- Insert Figures 6 and 7: Quantization demonstration -->
-<!-- Corresponds to the sixth and seventh figures (quantization and detailed quantization view) in the code -->
 
-```markdown
-![Figure 6 - Signal Quantization](fig6_quantization.png)
+
+![Figure 6 - Signal Quantization](Github_fig/Figure_6.png)
 *Figure 6: Signal Quantization - Top: 8-level quantization; Bottom: 4-level quantization*
 
-![Figure 7 - Detailed Quantization View](fig7_quantization_detail.png)
+![Figure 7 - Detailed Quantization View](Github_fig/Figure_7.png)
 *Figure 7: Detailed View of 4-Level Quantization - Shows quantization levels and quantization noise*
-```
+
 
 #### 2.2 Threshold Processing
 
@@ -124,13 +113,11 @@ Threshold processing applies binary decisions or truncation based on a set thres
 - Signal denoising
 - Binary conversion
 
-<!-- Insert Figure 8: Threshold processing demonstration -->
-<!-- Corresponds to the eighth figure (threshold processing) in the code -->
 
-```markdown
-![Figure 8 - Threshold Processing](fig8_thresholding.png)
+
+![Figure 8 - Threshold Processing](Github_fig/Figure_8.png)
 *Figure 8: Threshold Processing - Top: Soft thresholding (preserving above-threshold signals); Bottom: Binary thresholding (converting to 0/1 signal)*
-```
+
 
 #### 2.3 Compression and Expansion
 
@@ -141,16 +128,13 @@ Compression and expansion operations modify the dynamic range of signals, making
 - μ-law and A-law compression (telecommunication systems)
 - Logarithmic compression (auditory perception optimization)
 
-<!-- Insert Figures 9 and 10: Compression/expansion demonstration and compression curves -->
-<!-- Corresponds to the ninth and tenth figures (compression/expansion and compression curves) in the code -->
 
-```markdown
-![Figure 9 - Compression and Expansion](fig9_compression_expansion.png)
+![Figure 9 - Compression and Expansion](Github_fig/Figure_9.png)
 *Figure 9: Compression and Expansion - Top: μ-law compression; Middle: A-law compression; Bottom: Power-law expansion*
 
-![Figure 10 - Compression Curves](fig10_compression_curves.png)
+![Figure 10 - Compression Curves](Github_fig/Figure_10.png)
 *Figure 10: Comparison of Input-Output Curves for Different Compression Methods*
-```
+
 
 #### 2.4 Clipping and Limiting
 
@@ -161,16 +145,12 @@ Clipping and limiting prevent signals from exceeding specific ranges, with impor
 - Peak clipping in audio processing
 - Signal protection circuits
 
-<!-- Insert Figures 11 and 12: Clipping/limiting demonstration and limiting curves -->
-<!-- Corresponds to the eleventh and twelfth figures (clipping/limiting and clipping curves) in the code -->
-
-```markdown
-![Figure 11 - Clipping and Limiting](fig11_clipping_limiting.png)
+![Figure 11 - Clipping and Limiting](Github_fig/Figure_11.png)
 *Figure 11: Clipping and Limiting - Top: Hard clipping (hard limiting); Bottom: Soft clipping (soft limiting)*
 
-![Figure 12 - Clipping Curves](fig12_clipping_curves.png)
+![Figure 12 - Clipping Curves](Github_fig/Figure_12.png)
 *Figure 12: Comparison of Input-Output Curves for Different Clipping Methods*
-```
+
 
 #### 2.5 Rectification
 
@@ -181,11 +161,9 @@ Rectification converts negative signal values to positive values, a fundamental 
 - AC to DC conversion in power supplies
 - Absolute value calculation
 
-<!-- Insert Figure 13: Rectification demonstration -->
-<!-- Corresponds to the thirteenth figure (rectification) in the code -->
 
 ```markdown
-![Figure 13 - Signal Rectification](fig13_rectification.png)
+![Figure 13 - Signal Rectification](Github_fig/Figure_13.png)
 *Figure 13: Signal Rectification - Top: Half-wave rectification (preserving positive half-cycles); Bottom: Full-wave rectification (flipping negative half-cycles)*
 ```
 
@@ -193,13 +171,11 @@ Rectification converts negative signal values to positive values, a fundamental 
 
 Basic time-domain operations and point-by-point non-linear transformations constitute the foundation of time-domain signal processing. These techniques can be used individually or combined to implement more complex signal processing functions. Through this chapter, we've explored the principles, characteristics, and application scenarios of various time-domain processing methods, establishing a foundation for more advanced signal processing techniques.
 
-<!-- Insert Figure 14: Sample signal -->
-<!-- Corresponds to the last figure (sample signal) in the code -->
 
-```markdown
-![Figure 14 - Comprehensive Sample Signal](fig14_sample_signal.png)
+
+![Figure 14 - Comprehensive Sample Signal](Github_fig/Figure_14.png)
 *Figure 14: Comprehensive Sample Signal - A composite signal that can be used to test time-domain processing methods*
-```
+
 
 ---
 
