@@ -168,3 +168,117 @@ Rectification converts negative signal values to positive values, a fundamental 
 ```
 
 ---
+
+# II. Convolution and Correlation Analysis
+
+Time-domain convolution and correlation analysis provide powerful tools for understanding signal relationships and system behavior. These operations are fundamental to linear system theory and signal comparison.
+
+## 1. Linear Convolution Operations
+
+### 1.1 Definition and Properties
+
+Linear convolution represents the input-output relationship of linear, time-invariant systems, mathematically expressed as:
+
+```
+y(n) = x(n) * h(n) = Σh(k)x(n-k)
+```
+
+This operation determines how an input signal is transformed by a system with impulse response h(n).
+
+**Key Properties of Convolution:**
+- Commutative: x(n) * h(n) = h(n) * x(n)
+- Associative: [x(n) * h1(n)] * h2(n) = x(n) * [h1(n) * h2(n)]
+- Distributive: x(n) * [h1(n) + h2(n)] = x(n) * h1(n) + x(n) * h2(n)
+- Identity element: x(n) * δ(n) = x(n)
+
+### 1.2 Implementation Methods
+
+**Direct Computation Method:**
+The direct method applies the convolution sum formula directly, computing each output sample by multiplying and summing the appropriate input and impulse response values.
+
+**Overlap-Add Method:**
+This technique processes long signals by:
+1. Dividing the input into smaller segments
+2. Convolving each segment with the impulse response
+3. Adding the results with appropriate overlap
+
+**Overlap-Save Method:**
+This approach:
+1. Segments the input sequence with overlap regions
+2. Performs convolution on each segment
+3. Discards the transient portions and retains valid outputs
+
+### 1.3 Applications
+
+Linear convolution serves multiple purposes in signal processing:
+
+- **System Response Calculation:** Determining how signals are modified by systems
+- **Digital Filtering Implementation:** Creating smoothing, differentiating, or other filters
+- **Signal Enhancement:** Noise reduction and feature extraction
+
+![Linear System Response](Github_fig/Figure_13.png)
+*Figure 14: Linear System Response - Top: Input signal x(t); Middle: System impulse response h(t); Bottom: Output signal y(t) obtained through convolution*
+
+![Digital Filtering](Github_fig/Figure_14.png)
+*Figure 15: Digital Filtering Application - Top: Noisy input signal; Bottom: Filtered output after convolution with a lowpass filter impulse response*
+
+## 2. Correlation Analysis
+
+### 2.1 Autocorrelation
+
+Autocorrelation measures the similarity of a signal with time-shifted versions of itself, defined as:
+
+```
+R_xx(m) = E[x(n)x(n+m)]
+```
+
+**Key Properties:**
+- Symmetry: R_xx(-m) = R_xx(m)
+- Maximum value occurs at zero lag: R_xx(0) ≥ |R_xx(m)| for all m
+- Periodic signals produce periodic autocorrelation
+
+**Applications:**
+- Periodicity detection in signals
+- Signal-to-noise ratio estimation
+- Fundamental frequency estimation in speech signals
+- Random signal characterization
+
+![Periodic Signal Detection](Github_fig/Figure_15.png)
+*Figure 16: Periodicity Detection using Autocorrelation - Top: Periodic signal with noise; Bottom: Autocorrelation function revealing the signal's periodic nature*
+
+### 2.2 Cross-correlation
+
+Cross-correlation quantifies the similarity between two different signals as a function of time lag, defined as:
+
+```
+R_xy(m) = E[x(n)y(n+m)]
+```
+
+**Applications:**
+- Time delay estimation between signals
+- Pattern matching and template alignment
+- Signal similarity analysis
+- Echo detection and localization
+
+![Time Delay Estimation](Github_fig/Figure_16.png)
+*Figure 17: Time Delay Estimation using Cross-correlation - Top: Original signal; Middle: Delayed version of the signal; Bottom: Cross-correlation function with peak indicating the time delay*
+
+![Signal Similarity Analysis](Github_fig/Figure_17.png)
+*Figure 18: Signal Similarity Analysis - Top three panels: Original signals with different characteristics; Bottom two panels: Cross-correlation functions revealing similarity patterns*
+
+### 2.3 Partial Correlation
+
+Partial correlation measures the relationship between two signals while controlling for the influence of a third signal. It indicates the direct relationship between variables by removing the effects of intervening variables.
+
+**Mathematical Definition:**
+The partial correlation between x and y controlling for z is:
+
+```
+R_xy|z = (R_xy - R_xz·R_yz) / √[(1-R_xz²)(1-R_yz²)]
+```
+
+**Applications:**
+- Causal relationship analysis
+- Removal of common mode interference
+- Multi-channel signal analysis
+- System identification with multiple inputs
