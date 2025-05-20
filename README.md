@@ -29,7 +29,7 @@ Signal addition is used for signal mixing, such as combining multiple channels, 
 <!-- Corresponds to the first figure (original signals display) and second figure (addition and subtraction) in the code -->
 
 ```markdown
-![Figure 1 - Original Signals](fig1_original_signals.png)
+![Figure 1 - Original Signals](Github_fig\fig1.png)
 *Figure 1: Basic Signal Demonstration - Shows the fundamental sine waves and noise used for subsequent processing*
 
 ![Figure 2 - Signal Addition and Subtraction](fig2_addition_subtraction.png)
