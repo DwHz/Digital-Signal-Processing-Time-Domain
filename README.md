@@ -329,3 +329,114 @@ The code implements various nonlinear filtering approaches:
 - Min filter (morphological erosion)
 - Alpha-trimmed mean filter combining properties of median and mean filters
 - All filters using a 5-sample sliding window
+
+---
+
+# VII. Time Domain Analysis Methods
+
+To illustrate the practical application of time domain analysis methods, this section presents a comprehensive case study with visual examples of each technique applied to a test signal.
+
+## 1. Signal Construction and Visualization
+
+For demonstration purposes, we constructed a test signal with the following components:
+- Primary decaying sinusoid (10 Hz)
+- Secondary growing sinusoid (20 Hz)
+- Additive white noise component
+- Silence period
+- Final segment with a different frequency component (30 Hz)
+
+This composite signal mimics several characteristics found in real-world signals, such as amplitude modulation, frequency changes, background noise, and distinct segments.
+
+![Original Test Signal](Github_fig/Figure_23.png)
+*Figure 35: Original test signal showing the composite waveform with varying frequency components, amplitude modulation, and a silence region*
+
+## 2. Statistical Characteristics Analysis
+
+Statistical analysis provides quantitative metrics that describe the underlying distribution and properties of the signal.
+
+![Statistical Characteristics](Github_fig/Figure_24.png)
+*Figure 36: Statistical analysis of test signal - Top: Probability distribution with histogram and kernel density estimation, annotated with statistical metrics (mean, variance, power, skewness, kurtosis, entropy); Bottom: Original signal with mean value highlighted*
+
+The statistical analysis reveals:
+- Mean value close to zero (characteristic of AC signals)
+- Variance and power reflecting the overall energy content
+- Slight positive skewness, indicating an asymmetric distribution
+- Positive kurtosis, showing the presence of outliers in the signal
+- Entropy measurement quantifying the overall information content
+
+These metrics serve as fundamental descriptors for signal classification, anomaly detection, and baseline comparison in monitoring applications.
+
+## 3. Instantaneous Characteristics Analysis
+
+Instantaneous characteristics track dynamic properties of the signal as they evolve over time.
+
+![Signal Envelopes and Frequency](Github_fig/Figure_25.png)
+*Figure 37: Instantaneous characteristics - Top: Original signal with Hilbert envelope (red) and rectified-smoothed envelope (green); Bottom: Instantaneous frequency estimation with zero-crossing rate annotation*
+
+![Energy Contour](Github_fig/Figure_26.png)
+*Figure 38: Energy contour showing the variation of signal energy across time frames, clearly depicting active and silent regions*
+
+The instantaneous analysis demonstrates:
+- **Envelope Detection**: Both Hilbert transform and rectification-smoothing methods effectively capture the amplitude modulation, with the Hilbert transform providing a more mathematically precise contour
+- **Instantaneous Frequency**: The estimation reveals the underlying frequency components and their transitions, with the zero-crossing rate providing a global frequency indicator
+- **Energy Contour**: Frame-by-frame energy calculation clearly delineates active signal regions from silence, showing the temporal distribution of signal power
+
+These time-varying characteristics are particularly valuable for segmentation, modulation analysis, and detecting transient events in non-stationary signals.
+
+## 4. Linear Prediction Analysis
+
+Linear prediction models the signal as a linear combination of its past values, providing a compact parametric representation of its spectral characteristics.
+
+![Linear Prediction Analysis](Github_fig/Figure_27.png)
+*Figure 39: Linear prediction analysis - Top: Comparison of LPC coefficients obtained via autocorrelation method (blue) and covariance method (red); Bottom: LPC spectral representations showing the estimated frequency response*
+
+The linear prediction analysis shows:
+- **LPC Coefficients**: The stem plot compares coefficients obtained from both autocorrelation and covariance methods, revealing subtle differences in their estimations
+- **LPC Spectrum**: The frequency response derived from these coefficients captures the resonant structure of the signal, with the primary resonances corresponding to the fundamental frequencies in our test signal
+
+LPC analysis provides an efficient parametric representation that requires significantly fewer parameters than direct spectral representations, making it valuable for coding, compression, and pattern recognition applications.
+
+## 5. Endpoint Detection Analysis
+
+Endpoint detection identifies the boundaries between active signal regions and background noise or silence.
+
+![Endpoint Detection](Github_fig/Figure_28.png)
+*Figure 40: Endpoint detection analysis - Top: Original signal; Middle: Energy-based detection showing both fixed threshold (red) and adaptive threshold (green) methods; Bottom: Zero-crossing rate with combined detection points*
+
+The endpoint detection analysis demonstrates:
+- **Energy-Based Detection**: Fixed thresholding effectively identifies high-energy regions, while adaptive thresholding adjusts to the background noise level for more sensitive detection
+- **ZCR-Based Detection**: Zero-crossing rate provides frequency-related information that complements energy detection, particularly useful for detecting fricative sounds in speech
+- **Combined Detection**: The integration of both energy and ZCR criteria results in more robust endpoint identification
+
+These techniques form the foundation of speech segmentation, voice activity detection, and automatic segmentation systems for various signal types.
+
+## 6. Time Domain Feature Parameters
+
+Specialized time domain features capture specific signal characteristics that are valuable for classification and analysis.
+
+![Time Domain Features](Github_fig/Figure_29.png)
+*Figure 41: Time domain feature parameters - Top: Average Magnitude Difference Function (AMDF) with potential pitch period marked; Bottom: Teager Energy Operator (TEO) response*
+
+The time domain features analysis shows:
+- **AMDF**: The Average Magnitude Difference Function displays clear minima at time lags corresponding to the fundamental periods in the signal, with the most prominent minimum indicating the dominant pitch period
+- **TEO**: The Teager Energy Operator reveals the instantaneous energy variations with high sensitivity to rapid amplitude and frequency modulations, clearly highlighting the signal's non-linear energy distribution
+
+These specialized parameters provide targeted information about signal periodicities, modulations, and energy characteristics that may not be apparent from basic statistical analysis.
+
+## 7. Integrated Analysis Interpretation
+
+When interpreted together, these varied time domain analyses provide comprehensive insights into signal properties:
+
+1. **Structural Information**: Statistical characteristics reveal the overall distribution and baseline properties
+2. **Temporal Evolution**: Instantaneous analyses track dynamic changes in amplitude, frequency, and energy
+3. **Parametric Representation**: Linear prediction provides an efficient model of the signal's resonant structure
+4. **Segmentation Capabilities**: Endpoint detection automatically identifies active regions and boundaries
+5. **Specialized Features**: Time domain parameters extract specific characteristics for targeted applications
+
+This multi-faceted approach demonstrates how complementary time domain methods can collectively provide rich signal characterization without requiring transformation to other domains, offering computational efficiency and direct physical interpretation.
+
+
+
+
+---
+
