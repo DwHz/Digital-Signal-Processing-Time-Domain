@@ -285,3 +285,51 @@ R_xy|z = (R_xy - R_xz·R_yz) / √[(1-R_xz²)(1-R_yz²)]
 
 
 ---
+
+# III. Time-Domain Filtering Techniques: Visual Examples
+
+Based on the provided code implementation, these are the four main filtering demonstrations that would be generated:
+
+## 1. FIR Filter Demonstration
+
+![FIR Filter Demonstration](Github_fig/Figure_19.png)
+*Figure 41: FIR Filter Comparison with three panels - Top: Original noisy signal containing mixed sinusoids (50Hz, 80Hz, 120Hz) with additive white noise and impulse noise; Middle: Filtered output using Window Method (Hamming window with 51 coefficients); Bottom: Filtered output using Parks-McClellan algorithm with custom frequency bands.*
+
+The code creates an FIR filter demonstration with:
+- Noisy input signal containing multiple sinusoids (50Hz, 80Hz, 120Hz) contaminated with white noise and impulse noise
+- Window method implementation with Hamming window (51 coefficients, 80Hz cutoff)
+- Parks-McClellan equiripple design with specified passband (0-70Hz) and stopband (100-500Hz)
+
+## 2. IIR Filter Demonstration
+
+![IIR Filter Demonstration](Github_fig/Figure_20.png)
+*Figure 42: IIR Filter Comparison with four panels - Top: Original noisy signal; Second: Butterworth filtered signal (4th order, 80Hz cutoff); Third: Chebyshev filtered signal (4th order, 1dB ripple); Bottom: Elliptic filtered signal (4th order, 1dB ripple, 80dB stopband attenuation).*
+
+The code demonstrates three classical IIR filter designs:
+- Butterworth filter with maximally flat passband response
+- Chebyshev Type I filter with equiripple passband
+- Elliptic filter with equiripple in both passband and stopband
+- All filters implemented as 4th order with 80Hz cutoff frequency
+
+## 3. Adaptive Filter Demonstration
+
+![Adaptive Filter Demonstration](Github_fig/Figure_21.png)
+*Figure 43: Adaptive Filtering with four panels - Top: Clean reference signal (input); Second: Noisy target signal (desired output); Third: LMS filter output (using 32 coefficients and step size 0.01); Bottom: RLS filter output (using 32 coefficients and forgetting factor 0.99).*
+
+The code shows:
+- System identification problem using clean signal as input and noisy signal as desired output
+- LMS (Least Mean Squares) implementation with gradual adaptation
+- RLS (Recursive Least Squares) implementation with faster convergence
+- Both methods using 32 filter taps with their respective parameters
+
+## 4. Nonlinear Filter Demonstration
+
+![Nonlinear Filter Demonstration](Github_fig/Figure_22.png)
+*Figure 44: Nonlinear Filtering Comparison with five panels - Top: Original noisy signal; Second: Median filtered output (5-sample window); Third: Max filtered output; Fourth: Min filtered output; Bottom: Alpha-trimmed mean filtered output (α=0.2).*
+
+The code implements various nonlinear filtering approaches:
+- Median filter for impulse noise rejection
+- Max filter (morphological dilation)
+- Min filter (morphological erosion)
+- Alpha-trimmed mean filter combining properties of median and mean filters
+- All filters using a 5-sample sliding window
