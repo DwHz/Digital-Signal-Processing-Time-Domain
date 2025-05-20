@@ -1,10 +1,6 @@
 # Digital-Signal-Processing-Time-Domain
 Time domain signal processing is a collection of methods for operating on and analyzing signals directly in the time dimension. Unlike frequency domain or time-frequency domain processing, time domain processing acts directly on the original form of the signal and does not require domain transformation.
 
-# Time-Domain Signal Processing Methods: A Comprehensive Guide
-
-Time-domain signal processing forms the foundation of digital signal processing by directly manipulating signals in the time dimension. Understanding these techniques is essential for implementing more complex signal processing systems.
-
 ## I. Basic Time-Domain Operations
 
 Time-domain signal processing encompasses two main categories: basic signal operations and point-by-point non-linear transformations. These operations serve as fundamental building blocks for more sophisticated signal processing systems.
