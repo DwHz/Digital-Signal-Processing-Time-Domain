@@ -216,10 +216,10 @@ Linear convolution serves multiple purposes in signal processing:
 - **Digital Filtering Implementation:** Creating smoothing, differentiating, or other filters
 - **Signal Enhancement:** Noise reduction and feature extraction
 
-![Linear System Response](Github_fig/Figure_13.png)
+![Linear System Response](Github_fig/Figure_14.png)
 *Figure 14: Linear System Response - Top: Input signal x(t); Middle: System impulse response h(t); Bottom: Output signal y(t) obtained through convolution*
 
-![Digital Filtering](Github_fig/Figure_14.png)
+![Digital Filtering](Github_fig/Figure_15.png)
 *Figure 15: Digital Filtering Application - Top: Noisy input signal; Bottom: Filtered output after convolution with a lowpass filter impulse response*
 
 ## 2. Correlation Analysis
@@ -243,7 +243,7 @@ R_xx(m) = E[x(n)x(n+m)]
 - Fundamental frequency estimation in speech signals
 - Random signal characterization
 
-![Periodic Signal Detection](Github_fig/Figure_15.png)
+![Periodic Signal Detection](Github_fig/Figure_16.png)
 *Figure 16: Periodicity Detection using Autocorrelation - Top: Periodic signal with noise; Bottom: Autocorrelation function revealing the signal's periodic nature*
 
 ### 2.2 Cross-correlation
@@ -260,10 +260,10 @@ R_xy(m) = E[x(n)y(n+m)]
 - Signal similarity analysis
 - Echo detection and localization
 
-![Time Delay Estimation](Github_fig/Figure_16.png)
+![Time Delay Estimation](Github_fig/Figure_17.png)
 *Figure 17: Time Delay Estimation using Cross-correlation - Top: Original signal; Middle: Delayed version of the signal; Bottom: Cross-correlation function with peak indicating the time delay*
 
-![Signal Similarity Analysis](Github_fig/Figure_17.png)
+![Signal Similarity Analysis](Github_fig/Figure_18.png)
 *Figure 18: Signal Similarity Analysis - Top three panels: Original signals with different characteristics; Bottom two panels: Cross-correlation functions revealing similarity patterns*
 
 ### 2.3 Partial Correlation
@@ -282,3 +282,6 @@ R_xy|z = (R_xy - R_xz·R_yz) / √[(1-R_xz²)(1-R_yz²)]
 - Removal of common mode interference
 - Multi-channel signal analysis
 - System identification with multiple inputs
+
+
+---
