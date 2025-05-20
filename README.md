@@ -167,19 +167,4 @@ Rectification converts negative signal values to positive values, a fundamental 
 *Figure 13: Signal Rectification - Top: Half-wave rectification (preserving positive half-cycles); Bottom: Full-wave rectification (flipping negative half-cycles)*
 ```
 
-## Summary
-
-Basic time-domain operations and point-by-point non-linear transformations constitute the foundation of time-domain signal processing. These techniques can be used individually or combined to implement more complex signal processing functions. Through this chapter, we've explored the principles, characteristics, and application scenarios of various time-domain processing methods, establishing a foundation for more advanced signal processing techniques.
-
-
-
-![Figure 14 - Comprehensive Sample Signal](Github_fig/Figure_14.png)
-*Figure 14: Comprehensive Sample Signal - A composite signal that can be used to test time-domain processing methods*
-
-
 ---
-
-**Important Notes**:
-1. The image filenames in the Markdown above should match the actual generated image files
-2. When running the previous code, save each generated figure by adding `plt.savefig('figure_name.png')` before each `plt.show()` statement
-3. Images should be inserted after their corresponding text descriptions to enhance understanding
