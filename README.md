@@ -438,11 +438,6 @@ This multi-faceted approach demonstrates how complementary time domain methods c
 
 
 
----
-
-Based on your comprehensive document and the Python code implementation, I'll continue writing the sections that correspond to the generated figures. Here's the continuation:
-
----
 
 # V. Time-Domain Signal Enhancement and Recovery
 
