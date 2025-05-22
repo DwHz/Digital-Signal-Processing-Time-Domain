@@ -37,75 +37,67 @@ class TimeSignalEnhancement:
     # 1. NOISE SUPPRESSION TECHNIQUES
     # =====================================================
 
-    def spectral_subtraction_time_domain(self, noisy_signal, noise_estimate, alpha=2.0, beta=0.01):
-        """
-        Time-domain implementation of spectral subtraction with overlap-add
-        """
-        # Parameters for STFT
+    # ------------------------------------------------------------------
+    # 1. Spectral subtraction (fixed STFT tail, perfect-reconstruction,
+    #    and gain computed on magnitude spectrum)
+    # ------------------------------------------------------------------
+    def spectral_subtraction_time_domain(self, noisy_signal, noise_estimate,
+                                         alpha=2.0, beta=0.01):
         window_size = 256
         hop_size = window_size // 2
         window = np.hanning(window_size)
 
-        # Estimate noise spectrum
         noise_fft = np.fft.fft(noise_estimate[:window_size] * window)
         noise_power = np.abs(noise_fft) ** 2
 
-        # Initialize output
-        enhanced = np.zeros_like(noisy_signal)
+        enhanced = np.zeros_like(noisy_signal, dtype=float)
+        window_sum = np.zeros_like(noisy_signal, dtype=float)
 
-        # Process in overlapping frames
-        for i in range(0, len(noisy_signal) - window_size, hop_size):
+        for i in range(0, len(noisy_signal) - window_size + 1, hop_size):
             frame = noisy_signal[i:i + window_size] * window
             frame_fft = np.fft.fft(frame)
             frame_power = np.abs(frame_fft) ** 2
 
-            # Spectral subtraction
             gain = 1 - alpha * (noise_power / (frame_power + 1e-10))
-            gain = np.maximum(gain, beta)  # Prevent over-subtraction
+            gain = np.sqrt(np.maximum(gain, beta))  # magnitude gain
 
-            # Apply gain and convert back to time domain
             enhanced_fft = frame_fft * gain
             enhanced_frame = np.real(np.fft.ifft(enhanced_fft)) * window
 
-            # Overlap-add
             enhanced[i:i + window_size] += enhanced_frame
+            window_sum[i:i + window_size] += window ** 2  # OLA normaliser
 
+        window_sum[window_sum == 0] = 1.0  # avoid /0
+        enhanced /= window_sum
         return enhanced
 
+    # ------------------------------------------------------------------
+    # 2. Blind deconvolution (ℓ2 normalisation and convergence check)
+    # ------------------------------------------------------------------
     def blind_deconvolution(self, convolved_signal, max_iter=100):
-        """
-        Blind deconvolution using regularized approach
-        """
         N = len(convolved_signal)
-        # Initialize estimates
-        x_est = convolved_signal.copy()  # Signal estimate
-        h_est = np.array([1, 0.1, 0.01])  # Initial impulse response guess
+        x_est = convolved_signal.copy()
+        h_est = np.array([1.0, 0.1, 0.01], dtype=float)
+        λ = 0.01  # regulariser
 
-        lambda_reg = 0.01  # Regularization parameter
-
-        for iteration in range(max_iter):
-            # Update signal estimate (Wiener filtering)
+        for it in range(max_iter):
             H = np.fft.fft(h_est, N)
             Y = np.fft.fft(convolved_signal)
 
-            # Wiener filter
-            X = Y * np.conj(H) / (np.abs(H) ** 2 + lambda_reg)
+            X = Y * np.conj(H) / (np.abs(H) ** 2 + λ)
             x_new = np.real(np.fft.ifft(X))
 
-            # Update impulse response estimate
             X_fft = np.fft.fft(x_new)
-            h_new_fft = Y * np.conj(X_fft) / (np.abs(X_fft) ** 2 + lambda_reg)
-            h_new = np.real(np.fft.ifft(h_new_fft))[:len(h_est)]
+            h_new = Y * np.conj(X_fft) / (np.abs(X_fft) ** 2 + λ)
+            h_new = np.real(np.fft.ifft(h_new))[:len(h_est)]
+            h_new /= (np.linalg.norm(h_new) + 1e-12)  # ℓ2 norm
 
-            # Normalize
-            h_new = h_new / np.sum(h_new)
+            if it % 5 == 0:
+                reconv = np.convolve(x_new, h_new, mode='same')
+                if np.linalg.norm(reconv - convolved_signal) < 1e-6:
+                    break
 
-            # Check convergence
-            if np.linalg.norm(x_new - x_est) < 1e-6:
-                break
-
-            x_est = x_new
-            h_est = h_new
+            x_est, h_est = x_new, h_new
 
         return x_est, h_est
 
@@ -129,77 +121,49 @@ class TimeSignalEnhancement:
 
         return enhanced
 
-    def map_estimation_enhancement(self, noisy_signal, noise_var=0.1, signal_var=1.0):
-        """
-        Maximum A Posteriori (MAP) estimation for signal enhancement
-        """
-        # Prior model: Gaussian
-        # Posterior estimation using Wiener filtering principles
-
-        # Estimate signal power spectral density
+    # ------------------------------------------------------------------
+    # 3. MAP estimation (unchanged math, but cleaned variable scope)
+    # ------------------------------------------------------------------
+    def map_estimation_enhancement(self, noisy_signal, noise_var=0.1,
+                                   signal_var=1.0):
         nperseg = min(256, len(noisy_signal) // 4)
         f, Pxx = signal.welch(noisy_signal, self.fs, nperseg=nperseg)
-
-        # MAP estimation (simplified)
-        # H(f) = Pxx(f) / (Pxx(f) + noise_var/signal_var)
         H = Pxx / (Pxx + noise_var / signal_var)
 
-        # Apply frequency domain filtering
-        Y = np.fft.fft(noisy_signal)
-        freqs = np.fft.fftfreq(len(noisy_signal), 1 / self.fs)
-
-        # Interpolate filter response
+        N = len(noisy_signal)
+        freqs = np.fft.fftfreq(N, 1 / self.fs)
         H_interp = np.interp(np.abs(freqs), f, H)
 
-        # Apply filter
-        enhanced_fft = Y * H_interp
-        enhanced = np.real(np.fft.ifft(enhanced_fft))
+        enhanced_fft = np.fft.fft(noisy_signal) * H_interp
+        return np.real(np.fft.ifft(enhanced_fft))
 
-        return enhanced
-
-    def wavelet_denoising_time_domain(self, noisy_signal, wavelet_type='db4', threshold=0.1):
-        """
-        Multi-resolution analysis for denoising (simplified wavelet approach)
-        """
-        # Simplified multi-resolution analysis without pywt
-        # Using filter bank approach
-
-        # Low-pass and high-pass filters (Daubechies-like)
-        h0 = np.array([0.4830, 0.8365, 0.2241, -0.1294])  # Low-pass
-        h1 = np.array([-0.1294, -0.2241, 0.8365, -0.4830])  # High-pass
+    # ------------------------------------------------------------------
+    # 4. Wavelet denoising (√2-normalised filters + zero-phase reconstr.)
+    # ------------------------------------------------------------------
+    def wavelet_denoising_time_domain(self, noisy_signal, threshold=0.1):
+        h0 = np.array([0.4830, 0.8365, 0.2241, -0.1294]) / np.sqrt(2.0)
+        h1 = np.array([-0.1294, -0.2241, 0.8365, -0.4830]) / np.sqrt(2.0)
 
         def dwt_step(x):
-            # Convolution and downsampling
-            cA = signal.lfilter(h0, 1, x)[::2]  # Approximation
-            cD = signal.lfilter(h1, 1, x)[::2]  # Detail
+            cA = signal.lfilter(h0, 1, x)[::2]
+            cD = signal.lfilter(h1, 1, x)[::2]
             return cA, cD
 
         def idwt_step(cA, cD):
-            # Upsampling and convolution
-            cA_up = np.zeros(2 * len(cA))
-            cD_up = np.zeros(2 * len(cD))
+            cA_up = np.zeros(2 * len(cA));
             cA_up[::2] = cA
+            cD_up = np.zeros(2 * len(cD));
             cD_up[::2] = cD
-
-            # Reconstruction filters
-            g0 = h0[::-1]
-            g1 = h1[::-1]
-
-            x_rec = signal.lfilter(g0, 1, cA_up) + signal.lfilter(g1, 1, cD_up)
+            g0, g1 = h0[::-1], h1[::-1]
+            x_rec = signal.filtfilt(g0, 1, cA_up) + signal.filtfilt(g1, 1, cD_up)
             return x_rec[:len(cA_up)]
 
-        # Decompose
         cA1, cD1 = dwt_step(noisy_signal)
         cA2, cD2 = dwt_step(cA1)
-
-        # Threshold detail coefficients
         cD1_thresh = np.where(np.abs(cD1) > threshold, cD1, 0)
         cD2_thresh = np.where(np.abs(cD2) > threshold, cD2, 0)
-
-        # Reconstruct
         cA1_rec = idwt_step(cA2, cD2_thresh)
         enhanced = idwt_step(cA1_rec[:len(cD1_thresh)], cD1_thresh)
-
         return enhanced[:len(noisy_signal)]
 
     # =====================================================
@@ -225,15 +189,15 @@ class TimeSignalEnhancement:
 
         return sources, mixed, A
 
+    # ------------------------------------------------------------------
+    # 11. ICA (future-proof whiten parameter)
+    # ------------------------------------------------------------------
     def ica_time_domain(self, mixed_signals, max_iter=1000):
-        """
-        Independent Component Analysis implementation
-        """
-        # Use sklearn's FastICA
-        ica = FastICA(n_components=mixed_signals.shape[0], max_iter=max_iter, tol=1e-6)
+        ica = FastICA(n_components=mixed_signals.shape[0],
+                      max_iter=max_iter, tol=1e-6,
+                      whiten='unit-variance', random_state=0)
         separated = ica.fit_transform(mixed_signals.T).T
         mixing_matrix = ica.mixing_
-
         return separated, mixing_matrix
 
     def matching_pursuit(self, signal_in, dictionary, max_iter=50, threshold=0.01):
@@ -296,18 +260,13 @@ class TimeSignalEnhancement:
     # 3. SIGNAL RECONSTRUCTION AND INTERPOLATION
     # =====================================================
 
+    # ------------------------------------------------------------------
+    # 5. Zero-order hold (robust to unsorted indices)
+    # ------------------------------------------------------------------
     def zero_order_hold(self, original_signal, missing_indices):
-        """
-        Zero-order hold interpolation
-        """
         reconstructed = original_signal.copy()
-
-        for idx in missing_indices:
-            if idx > 0:
-                reconstructed[idx] = reconstructed[idx - 1]
-            else:
-                reconstructed[idx] = 0
-
+        for idx in np.sort(missing_indices):
+            reconstructed[idx] = reconstructed[idx - 1] if idx > 0 else 0.0
         return reconstructed
 
     def linear_interpolation(self, original_signal, missing_indices):
@@ -325,42 +284,34 @@ class TimeSignalEnhancement:
 
         return reconstructed
 
-    def polynomial_interpolation(self, original_signal, missing_indices, degree=3):
-        """
-        Polynomial interpolation
-        """
+    # ------------------------------------------------------------------
+    # 6. Polynomial interpolation (guard against over-fitting)
+    # ------------------------------------------------------------------
+    def polynomial_interpolation(self, original_signal, missing_indices,
+                                 degree=3):
         reconstructed = original_signal.copy()
-        valid_indices = np.setdiff1d(np.arange(len(original_signal)), missing_indices)
-
-        # Fit polynomial
-        coeffs = np.polyfit(valid_indices, original_signal[valid_indices], degree)
+        valid_indices = np.setdiff1d(np.arange(len(original_signal)),
+                                     missing_indices)
+        degree = min(degree, len(valid_indices) - 1)
+        coeffs = np.polyfit(valid_indices,
+                            original_signal[valid_indices], degree)
         poly = np.poly1d(coeffs)
-
         reconstructed[missing_indices] = poly(missing_indices)
-
         return reconstructed
 
-    def sinc_interpolation(self, original_signal, missing_indices, bandwidth=0.4):
-        """
-        Sinc interpolation based on sampling theorem
-        """
+    # ------------------------------------------------------------------
+    # 7. Sinc interpolation (simpler, faster with np.sinc)
+    # ------------------------------------------------------------------
+    def sinc_interpolation(self, original_signal, missing_indices,
+                           bandwidth=0.4):
         reconstructed = original_signal.copy()
-        valid_indices = np.setdiff1d(np.arange(len(original_signal)), missing_indices)
+        valid_indices = np.setdiff1d(np.arange(len(original_signal)),
+                                     missing_indices)
 
-        for missing_idx in missing_indices:
-            # Sinc interpolation
-            interpolated_value = 0
-            for valid_idx in valid_indices:
-                if abs(missing_idx - valid_idx) < 20:  # Limit kernel size
-                    t_diff = missing_idx - valid_idx
-                    if t_diff != 0:
-                        sinc_val = np.sin(np.pi * bandwidth * t_diff) / (np.pi * bandwidth * t_diff)
-                    else:
-                        sinc_val = 1
-                    interpolated_value += original_signal[valid_idx] * sinc_val
-
-            reconstructed[missing_idx] = interpolated_value
-
+        for m in missing_indices:
+            t_diff = m - valid_indices
+            kernel = np.sinc(bandwidth * t_diff)
+            reconstructed[m] = np.sum(original_signal[valid_indices] * kernel)
         return reconstructed
 
     def ar_reconstruction(self, signal_with_gaps, missing_indices, order=10):
@@ -388,82 +339,84 @@ class TimeSignalEnhancement:
 
         return reconstructed
 
+    # ------------------------------------------------------------------
+    # 8. AR coefficient estimation (mean-removed data)
+    # ------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # 8-bis. AR coefficient estimation (safe, positive-lag autocorr)
+    # ------------------------------------------------------------------
     def _estimate_ar_coefficients(self, signal_data, order):
         """
-        Estimate AR coefficients using Yule-Walker equations
+        Yule-Walker AR-parameter estimation with proper lag handling.
         """
-        # Autocorrelation estimation
-        autocorr = np.correlate(signal_data, signal_data, mode='full')
-        autocorr = autocorr[len(autocorr) // 2:]
-        autocorr = autocorr[:order + 1]
-        autocorr = autocorr / autocorr[0]  # Normalize
+        signal_data = signal_data - np.mean(signal_data)  # de-mean
+        N = len(signal_data)
+        max_lag = min(order, N - 1)  # safety
 
-        # Solve Yule-Walker equations
-        R = np.array([[autocorr[abs(i - j)] for j in range(order)] for i in range(order)])
-        r = autocorr[1:order + 1]
+        # full autocorrelation then keep non-negative lags only
+        autocorr_full = np.correlate(signal_data, signal_data, mode='full')
+        autocorr = autocorr_full[N - 1: N + max_lag]  # lag 0 … max_lag
+
+        if autocorr[0] == 0:  # degenerate case
+            return np.zeros(order)
+
+        autocorr /= autocorr[0]  # normalise
+
+        # build Toeplitz R and r for Yule-Walker
+        R = np.array([[autocorr[abs(i - j)] for j in range(max_lag)]
+                      for i in range(max_lag)], dtype=float)
+        r = autocorr[1:max_lag + 1]
 
         try:
-            ar_coeffs = np.linalg.solve(R, r)
+            a_hat = np.linalg.solve(R, r)
         except np.linalg.LinAlgError:
-            ar_coeffs = np.zeros(order)
+            a_hat = np.zeros(max_lag)
 
-        return ar_coeffs
+        # pad with zeros if max_lag < order
+        if max_lag < order:
+            a_hat = np.pad(a_hat, (0, order - max_lag))
 
-    def compressed_sensing_recovery(self, measurements, measurement_matrix, sparsity_level=10):
-        """
-        Compressed sensing recovery using iterative thresholding
-        """
-        # Initialize
+        return a_hat
+
+    # ------------------------------------------------------------------
+    # 9. Compressed sensing (optimal step + sparsify once)
+    # ------------------------------------------------------------------
+    def compressed_sensing_recovery(self, measurements, measurement_matrix,
+                                    sparsity_level=10, max_iter=100):
         x = np.zeros(measurement_matrix.shape[1])
-
-        # Iterative soft thresholding
-        step_size = 0.01
+        L = np.linalg.norm(measurement_matrix, 2) ** 2
+        step_size = 1.0 / L
         threshold = 0.1
 
-        for iteration in range(100):
-            # Gradient step
+        for _ in range(max_iter):
             residual = measurements - measurement_matrix @ x
             gradient = measurement_matrix.T @ residual
             x = x + step_size * gradient
-
-            # Soft thresholding
             x = np.sign(x) * np.maximum(np.abs(x) - threshold, 0)
 
-            # Keep only largest coefficients
-            idx = np.argsort(np.abs(x))[-sparsity_level:]
-            x_sparse = np.zeros_like(x)
-            x_sparse[idx] = x[idx]
-            x = x_sparse
+        keep_idx = np.argsort(np.abs(x))[-sparsity_level:]
+        x_sparse = np.zeros_like(x)
+        x_sparse[keep_idx] = x[keep_idx]
+        return x_sparse
 
-        return x
-
-    def clean_algorithm(self, dirty_signal, psf, gain=0.1, threshold=0.01, max_iter=100):
-        """
-        CLEAN algorithm for iterative reconstruction
-        """
-        # Initialize
+    # ------------------------------------------------------------------
+    # 10. CLEAN algorithm (remove edge-guard)
+    # ------------------------------------------------------------------
+    def clean_algorithm(self, dirty_signal, psf, gain=0.1,
+                        threshold=0.01, max_iter=100):
         clean_components = np.zeros_like(dirty_signal)
         residual = dirty_signal.copy()
 
-        for iteration in range(max_iter):
-            # Find peak in residual
+        for _ in range(max_iter):
             peak_idx = np.argmax(np.abs(residual))
             peak_value = residual[peak_idx]
-
-            # Check stopping criterion
             if np.abs(peak_value) < threshold:
                 break
 
-            # Subtract scaled PSF
             clean_components[peak_idx] += gain * peak_value
+            residual[peak_idx:peak_idx + len(psf)] -= gain * peak_value * psf
 
-            # Update residual
-            if peak_idx < len(residual) - len(psf):
-                residual[peak_idx:peak_idx + len(psf)] -= gain * peak_value * psf
-
-        # Final reconstruction
         reconstructed = clean_components + residual
-
         return reconstructed, clean_components
 
     def plot_noise_suppression_methods(self):
