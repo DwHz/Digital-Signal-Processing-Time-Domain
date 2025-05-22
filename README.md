@@ -158,10 +158,9 @@ Rectification converts negative signal values to positive values, a fundamental 
 - Absolute value calculation
 
 
-```markdown
+
 ![Figure 13 - Signal Rectification](Github_fig/Figure_13.png)
 *Figure 13: Signal Rectification - Top: Half-wave rectification (preserving positive half-cycles); Bottom: Full-wave rectification (flipping negative half-cycles)*
-```
 
 ---
 
