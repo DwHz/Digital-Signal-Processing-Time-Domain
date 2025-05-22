@@ -440,3 +440,248 @@ This multi-faceted approach demonstrates how complementary time domain methods c
 
 ---
 
+Based on your comprehensive document and the Python code implementation, I'll continue writing the sections that correspond to the generated figures. Here's the continuation:
+
+---
+
+# V. Time-Domain Signal Enhancement and Recovery
+
+Time-domain signal enhancement and recovery techniques address fundamental challenges in signal processing: removing unwanted noise, separating mixed signals, and reconstructing missing or corrupted data. These methods operate directly in the time domain without requiring frequency transformation.
+
+## 1. Noise Suppression Techniques
+
+### 1.1 Spectral Subtraction in Time Domain
+
+Spectral subtraction removes additive noise by estimating the noise spectrum and subtracting it from the noisy signal spectrum, then converting back to time domain using overlap-add processing.
+
+![Spectral Subtraction Method](Github_fig/Figure_30.png)
+*Figure 30: Spectral Subtraction Method - Top left: Original vs noisy signal comparison; Top right: Enhanced signal after spectral subtraction; Bottom left: Frequency domain analysis showing clean, noisy, and enhanced spectra; Bottom right: Spectrogram of noisy signal showing time-frequency characteristics*
+
+The spectral subtraction method demonstrates:
+- **Noise Estimation**: Uses noise-only segments to estimate the noise power spectrum
+- **Gain Function**: Applies frequency-dependent gain to suppress noise while preserving signal
+- **Over-subtraction Prevention**: Beta parameter prevents complete signal elimination
+- **Overlap-Add Processing**: Maintains signal continuity through windowed frame processing
+
+### 1.2 Blind Deconvolution
+
+Blind deconvolution simultaneously estimates both the original signal and the unknown convolution kernel from the observed convolved signal using iterative regularized optimization.
+
+![Blind Deconvolution Method](Github_fig/Figure_31.png)
+*Figure 31: Blind Deconvolution Method - Top left: Original vs convolved signal; Top right: Deconvolved result; Bottom left: Estimated impulse response; Bottom right: Reconstruction error over time*
+
+The blind deconvolution process shows:
+- **Iterative Estimation**: Alternately estimates signal and impulse response
+- **Regularization**: Prevents ill-conditioned solutions through Tikhonov regularization
+- **Convergence**: Demonstrates convergence to stable solution
+- **Impulse Response Recovery**: Successfully estimates the unknown convolution kernel
+
+### 1.3 Homomorphic Filtering
+
+Homomorphic filtering processes signals in the logarithmic domain to separate multiplicative noise components, particularly effective for signals with multiplicative distortions.
+
+![Homomorphic Filtering Method](Github_fig/Figure_32.png)
+*Figure 32: Homomorphic Filtering Method - Top left: Clean vs noisy signals; Top right: Homomorphic filtered result; Bottom left: Log domain processing; Bottom right: SNR improvement comparison*
+
+The homomorphic filtering demonstrates:
+- **Log Domain Processing**: Converts multiplicative noise to additive in log domain
+- **Low-pass Filtering**: Separates slow-varying from fast-varying components
+- **Exponential Recovery**: Converts back to linear domain
+- **SNR Improvement**: Quantifies enhancement performance
+
+### 1.4 Maximum A Posteriori (MAP) Estimation
+
+MAP estimation combines prior knowledge of signal and noise statistics to optimize signal enhancement using Bayesian inference principles.
+
+![MAP Estimation Method](Github_fig/Figure_33.png)
+*Figure 33: Maximum A Posteriori (MAP) Estimation - Top left: Input signals; Top right: MAP enhanced result; Bottom left: Power spectral density comparison; Bottom right: MAP filter response*
+
+The MAP estimation process shows:
+- **Statistical Modeling**: Uses Gaussian priors for signal and noise
+- **Wiener Filtering**: Implements optimal linear filter based on statistics
+- **PSD Analysis**: Compares power spectral densities before and after enhancement
+- **Filter Response**: Shows frequency-dependent enhancement characteristics
+
+### 1.5 Wavelet Denoising in Time Domain
+
+Wavelet denoising uses multi-resolution analysis to separate signal from noise by thresholding wavelet coefficients at different scales.
+
+![Wavelet Denoising Method](Github_fig/Figure_34.png)
+*Figure 34: Wavelet Denoising Method - Top left: Input signals; Top right: Wavelet denoised result; Bottom left: Detail coefficients visualization; Bottom right: Mean squared error comparison across all methods*
+
+The wavelet denoising implementation demonstrates:
+- **Multi-resolution Decomposition**: Separates signal into approximation and detail coefficients
+- **Soft Thresholding**: Preserves significant coefficients while removing noise
+- **Reconstruction**: Rebuilds signal from processed coefficients
+- **Performance Comparison**: Shows relative effectiveness of different noise suppression methods
+
+## 2. Blind Signal Separation
+
+### 2.1 Independent Component Analysis (ICA)
+
+ICA separates mixed signals by finding statistically independent components, assuming source signals are non-Gaussian and independent.
+
+![Independent Component Analysis](Github_fig/Figure_35.png)
+*Figure 35: Independent Component Analysis (ICA) - 3×3 grid showing original sources (top row), mixed signals (middle row), and separated signals (bottom row) for three different signal types*
+
+The ICA separation demonstrates:
+- **Source Diversity**: Original sources include sinusoidal, sawtooth, and noise signals
+- **Linear Mixing**: Shows how independent sources become mixed through linear combinations
+- **FastICA Algorithm**: Efficiently recovers source signals from mixed observations
+- **Separation Quality**: Visual comparison shows successful recovery of original signal characteristics
+
+### 2.2 Matching Pursuit Sparse Decomposition
+
+Matching pursuit decomposes signals into sparse linear combinations of dictionary atoms, iteratively selecting the best-matching components.
+
+![Matching Pursuit Sparse Decomposition](Github_fig/Figure_36.png)
+*Figure 36: Matching Pursuit Sparse Decomposition - Top left: Original signal; Top right: MP reconstruction; Bottom left: Sparse coefficients; Bottom right: Residual signal after decomposition*
+
+The matching pursuit process shows:
+- **Dictionary Construction**: Uses sinusoidal basis functions at different frequencies
+- **Greedy Selection**: Iteratively chooses atoms with maximum correlation
+- **Sparse Representation**: Achieves compact signal representation with few coefficients
+- **Residual Analysis**: Shows remaining signal energy after sparse approximation
+
+### 2.3 Non-negative Matrix Factorization (NMF)
+
+NMF decomposes magnitude spectrograms into non-negative basis functions and activations, particularly effective for separating additive signal components.
+
+![Non-negative Matrix Factorization](Github_fig/Figure_37.png)
+*Figure 37: Non-negative Matrix Factorization (NMF) - Top left: Original spectrogram; Top middle/right: NMF basis functions 1-3; Bottom left: NMF activation matrix; Bottom right: Reconstructed spectrogram*
+
+The NMF separation demonstrates:
+- **Spectrogram Factorization**: Decomposes time-frequency representation into parts and activations
+- **Non-negative Constraints**: Ensures physically meaningful decomposition
+- **Basis Function Learning**: Automatically discovers spectral patterns in the data
+- **Reconstruction Quality**: Shows how well the factorization approximates the original
+
+## 3. Signal Reconstruction and Interpolation
+
+### 3.1 Zero-Order Hold Interpolation
+
+Zero-order hold maintains the previous sample value for missing data points, creating a step-wise reconstruction.
+
+![Zero-Order Hold Interpolation](Github_fig/Figure_38.png)
+*Figure 38: Zero-Order Hold Interpolation - Top left: Signal with missing samples; Top right: ZOH reconstruction; Bottom left: Reconstruction error; Bottom right: Detailed view showing step behavior*
+
+The zero-order hold method shows:
+- **Step Reconstruction**: Maintains constant values between available samples
+- **Simplicity**: Requires minimal computation and memory
+- **High-frequency Distortion**: Introduces spectral artifacts due to step discontinuities
+- **Detailed Analysis**: Zoomed view reveals the characteristic step behavior
+
+### 3.2 Linear Interpolation
+
+Linear interpolation connects available samples with straight lines, providing smooth transitions between data points.
+
+![Linear Interpolation](Github_fig/Figure_39.png)
+*Figure 39: Linear Interpolation - Top left: Signal with missing samples; Top right: Linear interpolation result; Bottom left: Reconstruction error; Bottom right: Detailed view showing linear behavior*
+
+The linear interpolation demonstrates:
+- **Smooth Transitions**: Creates continuous, differentiable reconstructions
+- **Low Computational Cost**: Simple implementation with good performance
+- **Bandwidth Limitation**: Attenuates high-frequency components
+- **Error Analysis**: Shows reconstruction accuracy compared to original signal
+
+### 3.3 Polynomial Interpolation
+
+Polynomial interpolation fits higher-order polynomials through available data points, potentially providing better approximation at the cost of possible oscillations.
+
+![Polynomial Interpolation](Github_fig/Figure_40.png)
+*Figure 40: Polynomial Interpolation (Degree 5) - Top left: Signal with reduced missing samples; Top right: Polynomial interpolation result; Bottom left: Reconstruction error; Bottom right: Detailed view showing potential oscillations*
+
+The polynomial interpolation shows:
+- **Higher-Order Fitting**: Uses 5th-degree polynomials for better approximation
+- **Oscillation Risk**: May introduce unwanted oscillations between data points (Runge's phenomenon)
+- **Limited Sample Requirements**: Works with fewer missing samples for stability
+- **Quality Assessment**: Error analysis reveals both benefits and limitations
+
+### 3.4 Sinc Interpolation
+
+Sinc interpolation provides theoretically optimal reconstruction for band-limited signals based on the sampling theorem.
+
+![Sinc Interpolation](Github_fig/Figure_41.png)
+*Figure 41: Sinc Interpolation (Band-Limited) - Top left: Signal with missing samples; Top right: Sinc interpolation result; Bottom left: Sinc function kernel; Bottom right: Reconstruction error*
+
+The sinc interpolation demonstrates:
+- **Theoretical Optimality**: Provides perfect reconstruction for band-limited signals
+- **Sinc Kernel**: Shows the characteristic sin(x)/x interpolation function
+- **Band-Limited Assumption**: Works best when signals satisfy bandwidth constraints
+- **Computational Complexity**: Requires more computation than simpler methods
+
+### 3.5 Autoregressive (AR) Model Reconstruction
+
+AR model reconstruction predicts missing samples based on linear combinations of previous samples, using estimated model parameters.
+
+![Autoregressive Model Reconstruction](Github_fig/Figure_42.png)
+*Figure 42: Autoregressive (AR) Model Reconstruction - Top left: Signal with missing samples; Top right: AR reconstruction result; Bottom left: Estimated AR coefficients; Bottom right: Reconstruction error*
+
+The AR reconstruction shows:
+- **Predictive Modeling**: Uses past samples to predict missing values
+- **Coefficient Estimation**: Yule-Walker equations provide AR parameters
+- **Model Order Selection**: 10th-order model captures signal dynamics
+- **Temporal Correlation**: Exploits signal correlation structure for reconstruction
+
+### 3.6 Compressed Sensing Recovery
+
+Compressed sensing recovers sparse signals from undersampled measurements using optimization techniques that exploit signal sparsity.
+
+![Compressed Sensing Recovery](Github_fig/Figure_43.png)
+*Figure 43: Compressed Sensing Recovery - Top left: Original sparse signal; Top right: Compressed measurements; Bottom left: CS recovery result; Bottom right: Comparison of original vs recovered*
+
+The compressed sensing demonstration shows:
+- **Sparsity Assumption**: Original signal has only a few non-zero components
+- **Undersampling**: Uses fewer measurements than traditional sampling theory requires
+- **Iterative Recovery**: Soft thresholding algorithm recovers sparse structure
+- **Perfect Reconstruction**: Successfully recovers original sparse signal from limited data
+
+### 3.7 CLEAN Algorithm
+
+The CLEAN algorithm iteratively removes point spread function effects from signals, commonly used in radio astronomy and image processing.
+
+![CLEAN Algorithm](Github_fig/Figure_44.png)
+*Figure 44: CLEAN Algorithm for Deconvolution - Top left: True signal; Top right: Dirty signal (PSF convolved); Bottom left: CLEAN components; Bottom right: CLEAN reconstruction result*
+
+The CLEAN algorithm demonstrates:
+- **Point Spread Function**: Gaussian PSF simulates measurement system effects
+- **Iterative Deconvolution**: Gradually removes PSF effects through iteration
+- **Component Extraction**: Identifies and removes individual signal components
+- **Reconstruction Quality**: Final result closely approximates the true signal
+
+### 3.8 Performance Comparison
+
+![Interpolation Methods Performance Comparison](Github_fig/Figure_45.png)
+*Figure 45: Interpolation Methods Performance Comparison - Top left: Mean squared error comparison; Top right: Computational complexity; Bottom left: Frequency domain comparison; Bottom right: Performance summary with method characteristics*
+
+The performance comparison reveals:
+- **Accuracy Ranking**: Sinc interpolation provides best MSE performance for band-limited signals
+- **Complexity Trade-offs**: Simple methods (ZOH, Linear) offer speed advantages
+- **Frequency Response**: Different methods show varying effects on signal spectrum
+- **Method Selection Guidelines**: Summary table provides selection criteria for different applications
+
+## 4. Comprehensive Analysis and Summary
+
+![Comprehensive Summary](Github_fig/Figure_46.png)
+*Figure 46: Comprehensive Summary - Multiple panels showing SNR improvements, MSE comparisons, computational complexity, method performance radar chart, spectrograms, separation quality, and algorithm development timeline*
+
+The comprehensive analysis demonstrates:
+- **Method Effectiveness**: Quantitative comparison across all techniques
+- **Performance Metrics**: SNR improvements, MSE values, and complexity scores
+- **Application Domains**: Radar chart showing different method characteristics
+- **Historical Development**: Timeline of algorithm evolution in signal processing
+- **Spectral Analysis**: Time-frequency representations of enhanced signals
+
+![Performance Analysis and Selection Guidelines](Github_fig/Figure_47.png)
+*Figure 47: Performance Analysis and Selection Guidelines - Detailed tables showing method performance, interpolation comparisons, application domains, and comprehensive selection guidelines for practitioners*
+
+The final analysis provides:
+- **Performance Tables**: Quantitative metrics for all implemented methods
+- **Application Mapping**: Specific domains where each method excels
+- **Selection Guidelines**: Practical advice for method selection based on requirements
+- **Trade-off Analysis**: Understanding the balance between accuracy, speed, and complexity
+
+This comprehensive implementation demonstrates the rich variety of time-domain signal enhancement and recovery techniques, each with specific strengths and optimal application scenarios. The visual analysis enables practitioners to understand not only how these methods work, but also when and why to use each approach for specific signal processing challenges.
+
+---
+
